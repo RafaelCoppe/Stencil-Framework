@@ -1,3 +1,5 @@
+//go:build js && wasm
+
 package framework
 
 import (
@@ -5,62 +7,67 @@ import (
 	"syscall/js"
 )
 
-// Component represents a reusable UI component
-type Component interface {
+// PageInterface represents the interface that user pages must implement
+type PageInterface interface {
 	Render() string
+	HandleEvent(eventName string, event js.Value)
+	GetInitialState() map[string]interface{}
 }
 
-// App represents the main application framework
-type App struct {
-	container     js.Value
-	state         map[string]interface{}
-	rootComponent Component
+// App represents the main application framework (internal use only)
+type app struct {
+	container js.Value
+	state     map[string]interface{}
+	page      PageInterface
 }
 
-// NewApp creates a new application instance
-func NewApp(containerId string) *App {
+// Global app instance
+var appInstance *app
+
+// newApp creates a new application instance (internal)
+func newApp(containerId string) *app {
 	container := js.Global().Get("document").Call("getElementById", containerId)
 	if container.IsNull() {
 		panic(fmt.Sprintf("Element with ID '%s' not found", containerId))
 	}
 
-	return &App{
+	return &app{
 		container: container,
 		state:     make(map[string]interface{}),
 	}
 }
 
 // SetRootComponent sets the root component to render
-func (a *App) SetRootComponent(component Component) {
-	a.rootComponent = component
+func (a *app) setPage(page PageInterface) {
+	a.page = page
 }
 
-// SetState updates the application state
-func (a *App) SetState(key string, value interface{}) {
+// setState updates the application state
+func (a *app) setState(key string, value interface{}) {
 	a.state[key] = value
 }
 
-// GetState retrieves a value from the state
-func (a *App) GetState(key string) interface{} {
+// getState retrieves a value from the state
+func (a *app) getState(key string) interface{} {
 	return a.state[key]
 }
 
-// Update re-renders the application
-func (a *App) Update() {
-	if a.rootComponent != nil {
-		html := a.rootComponent.Render()
+// update re-renders the application
+func (a *app) update() {
+	if a.page != nil {
+		html := a.page.Render()
 		a.render(html)
 	}
 }
 
 // render updates the DOM with the generated HTML
-func (a *App) render(html string) {
+func (a *app) render(html string) {
 	a.container.Set("innerHTML", html)
 	a.attachEventListeners()
 }
 
 // attachEventListeners attaches event listeners after rendering
-func (a *App) attachEventListeners() {
+func (a *app) attachEventListeners() {
 	// Attach click events for buttons with data-onclick
 	buttons := a.container.Call("querySelectorAll", "[data-onclick]")
 	for i := 0; i < buttons.Length(); i++ {
@@ -90,26 +97,86 @@ func (a *App) attachEventListeners() {
 	}
 }
 
-// EventHandler represents a function that handles events
-type EventHandler func(eventName string, event js.Value, app *App)
-
-var eventHandlers = make(map[string]EventHandler)
-
-// RegisterEventHandler registers a custom event handler
-func RegisterEventHandler(eventName string, handler EventHandler) {
-	eventHandlers[eventName] = handler
-}
-
-// handleEvent handles custom events
-func (a *App) handleEvent(eventName string, event js.Value) {
-	if handler, exists := eventHandlers[eventName]; exists {
-		handler(eventName, event, a)
+// handleEvent handles custom events by delegating to the user's page
+func (a *app) handleEvent(eventName string, event js.Value) {
+	if a.page != nil {
+		a.page.HandleEvent(eventName, event)
+		a.update() // Auto re-render after event handling
 	}
 }
 
-// Start initializes and starts the application
-func (a *App) Start() {
-	a.Update()
+// start initializes and starts the application
+func (a *app) start() {
+	// Initialize state with user's initial state
+	if a.page != nil {
+		initialState := a.page.GetInitialState()
+		for key, value := range initialState {
+			a.state[key] = value
+		}
+	}
+
+	a.update()
 	// Keep the program alive
 	select {}
+}
+
+// Public API for users
+
+// Run starts the Stencil application with the provided page
+// This is the main entry point for users
+func Run(page PageInterface, containerId ...string) {
+	containerID := "app" // default
+	if len(containerId) > 0 {
+		containerID = containerId[0]
+	}
+
+	appInstance = newApp(containerID)
+	appInstance.page = page
+	appInstance.start()
+}
+
+// SetState updates the application state (available to user pages)
+func SetState(key string, value interface{}) {
+	if appInstance != nil {
+		appInstance.setState(key, value)
+		appInstance.update()
+	}
+}
+
+// GetState retrieves a value from the application state (available to user pages)
+func GetState(key string) interface{} {
+	if appInstance != nil {
+		return appInstance.getState(key)
+	}
+	return nil
+}
+
+// GetStateString retrieves a state value as string
+func GetStateString(key string) string {
+	if val := GetState(key); val != nil {
+		if str, ok := val.(string); ok {
+			return str
+		}
+	}
+	return ""
+}
+
+// GetStateInt retrieves a state value as int
+func GetStateInt(key string) int {
+	if val := GetState(key); val != nil {
+		if i, ok := val.(int); ok {
+			return i
+		}
+	}
+	return 0
+}
+
+// GetStateBool retrieves a state value as bool
+func GetStateBool(key string) bool {
+	if val := GetState(key); val != nil {
+		if b, ok := val.(bool); ok {
+			return b
+		}
+	}
+	return false
 }

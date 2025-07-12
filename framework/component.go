@@ -1,42 +1,27 @@
+//go:build js && wasm
+
 package framework
 
-// BaseComponent provides a base implementation for components
-type BaseComponent struct {
-	State *State
-	App   *App
+import (
+	"syscall/js"
+
+	StencilText "github.com/RafaelCoppe/Stencil-Go/pkg/text"
+)
+
+// BasePage provides a base implementation that users can embed in their pages
+type BasePage struct{}
+
+// GetInitialState provides default empty initial state
+func (p *BasePage) GetInitialState() map[string]interface{} {
+	return make(map[string]interface{})
 }
 
-// NewBaseComponent creates a new base component
-func NewBaseComponent(app *App) *BaseComponent {
-	state := NewState(app)
-	return &BaseComponent{
-		State: state,
-		App:   app,
-	}
+// HandleEvent provides default empty event handling
+func (p *BasePage) HandleEvent(eventName string, event js.Value) {
+	// Override this method in your page to handle events
 }
 
-// Render is the default render method (should be overridden)
-func (c *BaseComponent) Render() string {
-	return Div("Base Component - Override the Render method")
-}
-
-// Update triggers a re-render
-func (c *BaseComponent) Update() {
-	if c.App != nil {
-		c.App.Update()
-	}
-}
-
-// Page represents a full page component
-type Page struct {
-	*BaseComponent
-	Title string
-}
-
-// NewPage creates a new page
-func NewPage(app *App, title string) *Page {
-	return &Page{
-		BaseComponent: NewBaseComponent(app),
-		Title:         title,
-	}
+// Render provides a default render method
+func (p *BasePage) Render() string {
+	return StencilText.Titre1("Override the Render method in your page")
 }

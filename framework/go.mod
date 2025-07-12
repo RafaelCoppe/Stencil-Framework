@@ -1,4 +1,4 @@
-module github.com/RafaelCoppe/Stencil-Framework
+module github.com/RafaelCoppe/Stencil-Framework/framework
 
 go 1.24.1
 
