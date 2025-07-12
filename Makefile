@@ -4,11 +4,11 @@
 GOOS = js
 GOARCH = wasm
 BINARY_NAME = app.wasm
-MAIN_FILE = app.go
+MAIN_FILE = main.go
 PORT = 8080
 
 # Cibles principales
-.PHONY: all build serve clean setup dev
+.PHONY: all build serve clean setup dev create-route help
 
 all: build
 
@@ -59,8 +59,18 @@ dev: setup build serve
 clean:
 	@echo "🧹 Nettoyage des fichiers générés..."
 	@rm -f $(BINARY_NAME)
-	@rm -f wasm_exec.js
 	@echo "✅ Nettoyage terminé"
+
+# CLI pour créer des routes
+create-route:
+	@if [ -z "$(ROUTE)" ]; then \
+		echo "❌ Veuillez spécifier le nom de la route:"; \
+		echo "   make create-route ROUTE=nom-de-la-route"; \
+		echo "   make create-route ROUTE=admin/dashboard"; \
+		exit 1; \
+	fi
+	@echo "🚀 Création de la route: $(ROUTE)"
+	@go run cmd/cli.go create-route $(ROUTE)
 
 # Test de la compilation
 test:
@@ -79,14 +89,22 @@ info:
 	@echo "  - Port: $(PORT)"
 	@echo "  - Go version: $$(go version)"
 
-# Aide
+# Affichage de l'aide
 help:
-	@echo "🔧 Commandes disponibles:"
-	@echo "  make setup  - Configuration initiale du projet"
-	@echo "  make build  - Compilation du WebAssembly"
-	@echo "  make serve  - Démarrage du serveur de développement"
-	@echo "  make dev    - Configuration + compilation + serveur"
-	@echo "  make clean  - Nettoyage des fichiers générés"
-	@echo "  make test   - Test de la compilation"
-	@echo "  make info   - Informations sur le projet"
-	@echo "  make help   - Affichage de cette aide"
+	@echo "📚 Stencil Framework - Commandes disponibles:"
+	@echo ""
+	@echo "🔨 Compilation:"
+	@echo "  make build         - Compiler le projet WebAssembly"
+	@echo "  make clean         - Nettoyer les fichiers générés"
+	@echo ""
+	@echo "🚀 Développement:"
+	@echo "  make setup         - Configuration initiale du projet"
+	@echo "  make serve         - Démarrer le serveur de développement"
+	@echo "  make dev           - Compilation + serveur (mode développement)"
+	@echo ""
+	@echo "🧭 Routage:"
+	@echo "  make create-route ROUTE=nom     - Créer une nouvelle route"
+	@echo "  make create-route ROUTE=admin/users - Créer une route imbriquée"
+	@echo ""
+	@echo "🔧 Autres:"
+	@echo "  make help          - Afficher cette aide"

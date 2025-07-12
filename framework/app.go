@@ -95,6 +95,30 @@ func (a *app) attachEventListeners() {
 
 		input.Call("addEventListener", "change", eventFunc)
 	}
+
+	// Attach click events for router navigation links
+	links := a.container.Call("querySelectorAll", "a[href^='/']")
+	for i := 0; i < links.Length(); i++ {
+		link := links.Index(i)
+
+		eventFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+			event := args[0]
+			event.Call("preventDefault")
+
+			href := link.Get("href").String()
+			// Extract path from full URL
+			url := js.Global().Get("URL").New(href)
+			path := url.Get("pathname").String()
+
+			// Navigate using router
+			if globalRouter != nil {
+				globalRouter.Navigate(path)
+			}
+			return nil
+		})
+
+		link.Call("addEventListener", "click", eventFunc)
+	}
 }
 
 // handleEvent handles custom events by delegating to the user's page
@@ -120,6 +144,17 @@ func (a *app) start() {
 	select {}
 }
 
+// startWithRouter starts the application in router mode
+func (a *app) startWithRouter() {
+	// Let the router handle the initial render
+	if globalRouter != nil {
+		globalRouter.render()
+	}
+
+	// Keep the program alive
+	select {}
+}
+
 // Public API for users
 
 // Run starts the Stencil application with the provided page
@@ -131,8 +166,34 @@ func Run(page PageInterface, containerId ...string) {
 	}
 
 	appInstance = newApp(containerID)
+
+	// Initialize router
+	router := InitRouter()
+
+	// If a page is provided, register it as the default route
+	if page != nil {
+		router.RegisterRoute("/", func() PageInterface { return page })
+	}
+
+	// Start the application
 	appInstance.page = page
 	appInstance.start()
+}
+
+// RunWithRouter starts the framework with routing capabilities
+func RunWithRouter(containerId ...string) {
+	containerID := "app" // default
+	if len(containerId) > 0 {
+		containerID = containerId[0]
+	}
+
+	appInstance = newApp(containerID)
+
+	// Initialize router
+	InitRouter()
+
+	// Start the application in router mode
+	appInstance.startWithRouter()
 }
 
 // SetState updates the application state (available to user pages)

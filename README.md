@@ -8,18 +8,38 @@ Un framework moderne pour créer des applications web interactives en Go en util
 - **Stencil-Go** : Génération déclarative de HTML avec une syntaxe fluide
 - **Réactivité** : Gestion d'état et re-rendu automatique
 - **Événements** : Système d'événements personnalisés
+- **Routing** : Système de routage inspiré de Next.js avec support de routes basées sur fichiers
 - **Styling** : Intégration Tailwind CSS
 - **Performance** : Rendu optimisé avec DOM virtuel
 
+## 🧭 Système de Routage Next.js
+
+Le framework inclut un système de routage inspiré de Next.js :
+
+- **Routes basées sur fichiers** : Organisez vos pages dans le dossier `app/`
+- **Support page/create/edit** : Chaque route peut avoir `page.go`, `create.go`, et `edit.go`
+- **Navigation client** : Navigation sans rechargement de page
+- **Historique navigateur** : Support complet des boutons précédent/suivant
+
+Voir [ROUTING.md](ROUTING.md) pour la documentation complète.
+
 ## 📁 Structure du projet
 
-```
-stencil-wasm/
-├── app.go          # Application WebAssembly principale
+```text
+stencil-framework/
+├── main.go         # Point d'entrée principal avec routage
+├── app/
+│   ├── page.go     # Page d'accueil (/)
+│   └── about/
+│       ├── page.go     # Page à propos (/about)
+│       ├── create.go   # Page de création (/about/create)
+│       └── edit.go     # Page d'édition (/about/edit)
+├── framework/      # Code du framework
 ├── go.mod          # Dépendances Go
 ├── index.html      # Page HTML d'entrée
 ├── Makefile        # Automatisation des tâches
 ├── README.md       # Documentation
+├── ROUTING.md      # Documentation du routage
 └── wasm_exec.js    # Runtime WebAssembly Go
 ```
 
