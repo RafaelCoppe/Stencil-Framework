@@ -8,5 +8,5 @@ replace github.com/RafaelCoppe/Stencil-Framework/framework => ./framework
 
 require (
 	github.com/RafaelCoppe/Stencil-Framework/framework v0.0.0-20250712155831-1876e3cba7fa
-	github.com/RafaelCoppe/Stencil-Go v1.0.4
+	github.com/RafaelCoppe/Stencil-Go v1.1.0
 )

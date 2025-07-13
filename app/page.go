@@ -136,7 +136,7 @@ func (p *WelcomePage) Render() string {
 					return "Show Framework Details"
 				}(),
 				"toggleDetails",
-				[]string{"btn", "btn-outline-primary", "btn-lg"},
+				"btn", "btn-outline-primary", "btn-lg",
 			),
 			"text-center", "mb-4",
 		),
@@ -215,12 +215,5 @@ func RegisterRoutes() {
 		func() framework.PageInterface { return &WelcomePage{} },
 		nil, // create.go handler
 		nil, // edit.go handler
-	)
-
-	// Register about page routes
-	framework.RegisterPageRoute("/about",
-		func() framework.PageInterface { return &about.AboutPage{} },
-		func() framework.PageInterface { return &about.CreatePage{} },
-		func() framework.PageInterface { return &about.EditPage{} },
 	)
 }

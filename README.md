@@ -29,11 +29,7 @@ Voir [ROUTING.md](ROUTING.md) pour la documentation complète.
 stencil-framework/
 ├── main.go         # Point d'entrée principal avec routage
 ├── app/
-│   ├── page.go     # Page d'accueil (/)
-│   └── about/
-│       ├── page.go     # Page à propos (/about)
-│       ├── create.go   # Page de création (/about/create)
-│       └── edit.go     # Page d'édition (/about/edit)
+│   └── page.go     # Page d'accueil (/)
 ├── framework/      # Code du framework
 ├── go.mod          # Dépendances Go
 ├── index.html      # Page HTML d'entrée
