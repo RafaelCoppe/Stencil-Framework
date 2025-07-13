@@ -3,11 +3,11 @@
 package about
 
 import (
-	"github.com/RafaelCoppe/Stencil-Framework/framework"
+	"github.com/RafaelCoppe/Stencil-Framework/core/framework"
+	StencilInteractions "github.com/RafaelCoppe/Stencil-Go/pkg/interactions"
 	StencilPage "github.com/RafaelCoppe/Stencil-Go/pkg/page"
 	StencilText "github.com/RafaelCoppe/Stencil-Go/pkg/text"
 	StencilUtils "github.com/RafaelCoppe/Stencil-Go/pkg/utils"
-	StencilInteractions "github.com/RafaelCoppe/Stencil-Go/pkg/interactions"
 )
 
 // AboutCreatePage represents the create page for about
@@ -23,7 +23,7 @@ func (p *AboutCreatePage) Render() string {
 	content := StencilUtils.Join(
 		StencilText.Titre1("Create New About", "text-center", "text-success", "mb-4"),
 		StencilText.Paragraphe("Create a new item in about", "text-center", "lead", "mb-4"),
-		
+
 		StencilPage.Div(
 			StencilUtils.Join(
 				StencilText.Titre2("Create Form", "mb-3"),
@@ -31,7 +31,7 @@ func (p *AboutCreatePage) Render() string {
 			),
 			"bg-success", "bg-opacity-10", "p-4", "rounded", "mb-4",
 		),
-		
+
 		StencilPage.Div(
 			StencilUtils.Join(
 				StencilInteractions.Lien("/about", "← Back to About", "btn", "btn-secondary", "me-2"),

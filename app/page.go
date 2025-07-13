@@ -7,7 +7,7 @@ import (
 
 	"github.com/RafaelCoppe/Stencil-Framework/app/about"
 	"github.com/RafaelCoppe/Stencil-Framework/components"
-	"github.com/RafaelCoppe/Stencil-Framework/framework"
+	"github.com/RafaelCoppe/Stencil-Framework/core/framework"
 	StencilInteractions "github.com/RafaelCoppe/Stencil-Go/pkg/interactions"
 	StencilPage "github.com/RafaelCoppe/Stencil-Go/pkg/page"
 	StencilText "github.com/RafaelCoppe/Stencil-Go/pkg/text"

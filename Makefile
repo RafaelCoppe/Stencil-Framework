@@ -3,7 +3,7 @@
 # Variables
 GOOS = js
 GOARCH = wasm
-BINARY_NAME = app.wasm
+BINARY_NAME = core/app.wasm
 MAIN_FILE = main.go
 PORT = 8080
 
@@ -21,27 +21,27 @@ build:
 # Configuration initiale
 setup:
 	@echo "🚀 Configuration du projet..."
-	@if [ ! -f "wasm_exec.js" ]; then \
+	@if [ ! -f "core/wasm_exec.js" ]; then \
 		echo "📋 Copie de wasm_exec.js..."; \
 		if [ -f "$$(go env GOROOT)/lib/wasm/wasm_exec.js" ]; then \
-			cp "$$(go env GOROOT)/lib/wasm/wasm_exec.js" .; \
+			cp "$$(go env GOROOT)/lib/wasm/wasm_exec.js" core/; \
 		elif [ -f "$$(go env GOROOT)/misc/wasm/wasm_exec.js" ]; then \
-			cp "$$(go env GOROOT)/misc/wasm/wasm_exec.js" .; \
+			cp "$$(go env GOROOT)/misc/wasm/wasm_exec.js" core/; \
 		elif [ -f "/usr/local/go/lib/wasm/wasm_exec.js" ]; then \
-			cp "/usr/local/go/lib/wasm/wasm_exec.js" .; \
+			cp "/usr/local/go/lib/wasm/wasm_exec.js" core/; \
 		else \
 			echo "❌ wasm_exec.js introuvable. Téléchargement depuis GitHub..."; \
-			curl -s -o wasm_exec.js https://raw.githubusercontent.com/golang/go/master/misc/wasm/wasm_exec.js; \
+			curl -s -o core/wasm_exec.js https://raw.githubusercontent.com/golang/go/master/misc/wasm/wasm_exec.js; \
 		fi; \
 	fi
-	@echo "� Mise à jour des dépendances..."
+	@echo "🔄 Mise à jour des dépendances..."
 	@go mod tidy
 	@echo "✅ Configuration terminée"
 
 # Serveur de développement
 serve:
 	@echo "🌐 Démarrage du serveur de développement sur le port $(PORT)..."
-	@if command -v python3 > /dev/null; then \
+	@cd core && if command -v python3 > /dev/null; then \
 		echo "🐍 Utilisation de Python 3 avec serveur SPA..."; \
 		python3 spa_server.py $(PORT); \
 	elif command -v python > /dev/null; then \
@@ -81,9 +81,7 @@ dev: setup build serve
 clean:
 	@echo "🧹 Nettoyage des fichiers générés..."
 	@rm -f $(BINARY_NAME)
-	@rm -f .spa_router.php
-	@rm -f spa_server.py
-	@rm -f spa_server_py2.py
+	@rm -f core/.spa_router.php
 	@echo "✅ Nettoyage terminé"
 
 # CLI pour créer des routes
@@ -95,7 +93,7 @@ create-route:
 		exit 1; \
 	fi
 	@echo "🚀 Création de la route: $(ROUTE)"
-	@go run cmd/cli.go create-route $(ROUTE)
+	@go run core/cmd/cli.go create-route $(ROUTE)
 
 # Test de la compilation
 test:

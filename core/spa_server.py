@@ -14,6 +14,15 @@ class SPAHandler(http.server.SimpleHTTPRequestHandler):
     def do_GET(self):
         # Parse l'URL pour obtenir le chemin
         url_path = urllib.parse.urlparse(self.path).path
+        
+        # Gestion spéciale pour les assets WebAssembly
+        if url_path == '/wasm_exec.js' and os.path.exists('wasm_exec.js'):
+            self.path = '/wasm_exec.js'
+            return super().do_GET()
+        elif url_path == '/app.wasm' and os.path.exists('app.wasm'):
+            self.path = '/app.wasm'
+            return super().do_GET()
+        
         file_path = self.translate_path(url_path)
         
         # Fichiers statiques à servir normalement

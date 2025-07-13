@@ -3,11 +3,11 @@
 package about
 
 import (
-	"github.com/RafaelCoppe/Stencil-Framework/framework"
+	"github.com/RafaelCoppe/Stencil-Framework/core/framework"
+	StencilInteractions "github.com/RafaelCoppe/Stencil-Go/pkg/interactions"
 	StencilPage "github.com/RafaelCoppe/Stencil-Go/pkg/page"
 	StencilText "github.com/RafaelCoppe/Stencil-Go/pkg/text"
 	StencilUtils "github.com/RafaelCoppe/Stencil-Go/pkg/utils"
-	StencilInteractions "github.com/RafaelCoppe/Stencil-Go/pkg/interactions"
 )
 
 // AboutEditPage represents the edit page for about
@@ -23,7 +23,7 @@ func (p *AboutEditPage) Render() string {
 	content := StencilUtils.Join(
 		StencilText.Titre1("Edit About", "text-center", "text-warning", "mb-4"),
 		StencilText.Paragraphe("Edit an existing item in about", "text-center", "lead", "mb-4"),
-		
+
 		StencilPage.Div(
 			StencilUtils.Join(
 				StencilText.Titre2("Edit Form", "mb-3"),
@@ -31,7 +31,7 @@ func (p *AboutEditPage) Render() string {
 			),
 			"bg-warning", "bg-opacity-10", "p-4", "rounded", "mb-4",
 		),
-		
+
 		StencilPage.Div(
 			StencilUtils.Join(
 				StencilInteractions.Lien("/about", "← Back to About", "btn", "btn-secondary", "me-2"),

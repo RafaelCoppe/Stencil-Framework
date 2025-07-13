@@ -4,7 +4,7 @@ package main
 
 import (
 	"github.com/RafaelCoppe/Stencil-Framework/app"
-	"github.com/RafaelCoppe/Stencil-Framework/framework"
+	"github.com/RafaelCoppe/Stencil-Framework/core/framework"
 )
 
 func main() {

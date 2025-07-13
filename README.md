@@ -30,13 +30,17 @@ stencil-framework/
 ├── main.go         # Point d'entrée principal avec routage
 ├── app/
 │   └── page.go     # Page d'accueil (/)
-├── framework/      # Code du framework
+├── components/     # Composants réutilisables
+├── core/           # Fichiers du framework (ne pas modifier)
+│   ├── framework/  # Code du framework
+│   ├── cmd/        # Outils CLI
+│   ├── index.html  # Page HTML d'entrée
+│   ├── Makefile    # Automatisation des tâches
+│   └── wasm_exec.js# Runtime WebAssembly Go
 ├── go.mod          # Dépendances Go
-├── index.html      # Page HTML d'entrée
-├── Makefile        # Automatisation des tâches
+├── Makefile        # Makefile principal
 ├── README.md       # Documentation
-├── ROUTING.md      # Documentation du routage
-└── wasm_exec.js    # Runtime WebAssembly Go
+└── ROUTING.md      # Documentation du routage
 ```
 
 ## 🛠 Installation et configuration

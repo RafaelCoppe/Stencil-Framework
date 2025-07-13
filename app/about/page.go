@@ -3,11 +3,11 @@
 package about
 
 import (
-	"github.com/RafaelCoppe/Stencil-Framework/framework"
+	"github.com/RafaelCoppe/Stencil-Framework/core/framework"
+	StencilInteractions "github.com/RafaelCoppe/Stencil-Go/pkg/interactions"
 	StencilPage "github.com/RafaelCoppe/Stencil-Go/pkg/page"
 	StencilText "github.com/RafaelCoppe/Stencil-Go/pkg/text"
 	StencilUtils "github.com/RafaelCoppe/Stencil-Go/pkg/utils"
-	StencilInteractions "github.com/RafaelCoppe/Stencil-Go/pkg/interactions"
 )
 
 // AboutPage represents the about page
@@ -23,7 +23,7 @@ func (p *AboutPage) Render() string {
 	content := StencilUtils.Join(
 		StencilText.Titre1("About", "text-center", "text-primary", "mb-4"),
 		StencilText.Paragraphe("Welcome to the about page!", "text-center", "lead", "mb-4"),
-		
+
 		StencilPage.Div(
 			StencilUtils.Join(
 				StencilText.Titre2("Page Actions", "mb-3"),
