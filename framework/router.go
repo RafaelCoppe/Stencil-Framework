@@ -162,13 +162,20 @@ func setupBrowserRouting() {
 		return nil
 	}))
 
-	// Handle initial load
-	js.Global().Call("addEventListener", "DOMContentLoaded", js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+	// Handle initial load - execute immediately if DOM is already loaded
+	if js.Global().Get("document").Get("readyState").String() == "complete" {
 		if globalRouter != nil {
 			globalRouter.render()
 		}
-		return nil
-	}))
+	} else {
+		// Handle initial load when DOM becomes ready
+		js.Global().Call("addEventListener", "DOMContentLoaded", js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+			if globalRouter != nil {
+				globalRouter.render()
+			}
+			return nil
+		}))
+	}
 }
 
 // NavigateTo navigates to a path (global function)

@@ -42,11 +42,33 @@ setup:
 serve:
 	@echo "🌐 Démarrage du serveur de développement sur le port $(PORT)..."
 	@if command -v python3 > /dev/null; then \
-		python3 -m http.server $(PORT); \
+		echo "🐍 Utilisation de Python 3 avec serveur SPA..."; \
+		python3 spa_server.py $(PORT); \
 	elif command -v python > /dev/null; then \
-		python -m SimpleHTTPServer $(PORT); \
+		echo "🐍 Utilisation de Python 2 avec serveur SPA..."; \
+		python spa_server_py2.py $(PORT); \
 	elif command -v php > /dev/null; then \
-		php -S localhost:$(PORT); \
+		echo "🐘 Utilisation de PHP avec routeur SPA..."; \
+		echo '<?php \
+$$uri = parse_url($$_SERVER["REQUEST_URI"], PHP_URL_PATH); \
+$$file = __DIR__ . $$uri; \
+$$static_extensions = [".js", ".wasm", ".css", ".png", ".jpg", ".jpeg", ".gif", ".svg", ".ico", ".html", ".json", ".txt"]; \
+$$is_static = false; \
+foreach ($$static_extensions as $$ext) { \
+    if (substr($$uri, -strlen($$ext)) === $$ext) { \
+        $$is_static = true; \
+        break; \
+    } \
+} \
+if ($$is_static && file_exists($$file) && !is_dir($$file)) { \
+    return false; \
+} \
+if (strpos($$uri, "/wasm_exec.js") === 0 || strpos($$uri, "/app.wasm") === 0) { \
+    return false; \
+} \
+include_once "index.html"; \
+?>' > .spa_router.php; \
+		php -S localhost:$(PORT) .spa_router.php; \
 	else \
 		echo "❌ Aucun serveur HTTP disponible. Installez Python ou PHP."; \
 		exit 1; \
@@ -59,6 +81,9 @@ dev: setup build serve
 clean:
 	@echo "🧹 Nettoyage des fichiers générés..."
 	@rm -f $(BINARY_NAME)
+	@rm -f .spa_router.php
+	@rm -f spa_server.py
+	@rm -f spa_server_py2.py
 	@echo "✅ Nettoyage terminé"
 
 # CLI pour créer des routes

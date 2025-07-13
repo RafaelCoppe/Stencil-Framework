@@ -148,6 +148,8 @@ func (a *app) start() {
 func (a *app) startWithRouter() {
 	// Let the router handle the initial render
 	if globalRouter != nil {
+		// Force immediate render for the current path
+		globalRouter.currentPath = js.Global().Get("location").Get("pathname").String()
 		globalRouter.render()
 	}
 
