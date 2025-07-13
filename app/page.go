@@ -29,183 +29,192 @@ func (p *WelcomePage) HandleEvent(eventName string, event js.Value) {
 	case "toggleDetails":
 		showDetails := framework.GetStateBool("showDetails")
 		framework.SetState("showDetails", !showDetails)
+	case "navigateToAbout":
+		framework.NavigateTo("/about")
+	case "navigateToCreate":
+		framework.NavigateTo("/about/create")
+	case "navigateToEdit":
+		framework.NavigateTo("/about/edit")
 	}
 }
 
 func (p *WelcomePage) Render() string {
 	showDetails := framework.GetStateBool("showDetails")
 
-	// Main content
-	content := StencilUtils.Join(
-		// Header section
-		StencilText.Titre1("Welcome to Stencil Framework! 🚀", "text-center", "text-primary", "mb-4"),
-		StencilText.Paragraphe("Build modern WebAssembly applications with Go", "text-center", "lead", "mb-5"),
+	// Create the main hero section
+	heroSection := StencilPage.Div(
+		StencilUtils.Join(
+			StencilText.Titre1("Stencil Framework 🚀", "text-5xl", "font-bold", "text-white", "mb-4"),
+			StencilText.Paragraphe("Build modern WebAssembly applications with Go", "text-xl", "text-blue-100", "mb-8"),
 
-		StencilUtils.Hr("my-5"),
-
-		// Navigation section
-		StencilPage.Div(
-			StencilUtils.Join(
-				StencilText.Titre2("🧭 Navigation Demo", "mb-3"),
-				StencilText.Paragraphe("Test the Next.js-style routing:", "mb-3"),
-				StencilPage.Div(
-					StencilUtils.Join(
-						StencilInteractions.Lien("/about", "About Page", "btn", "btn-primary", "me-2", "mb-2"),
-						StencilInteractions.Lien("/about/create", "Create Page", "btn", "btn-success", "me-2", "mb-2"),
-						StencilInteractions.Lien("/about/edit", "Edit Page", "btn", "btn-warning", "me-2", "mb-2"),
-					),
-					"d-flex", "flex-wrap", "gap-2", "justify-content-center",
+			// Call to action buttons
+			StencilPage.Div(
+				StencilUtils.Join(
+					StencilInteractions.Lien("/about", "Get Started", "bg-white", "text-blue-600", "px-8", "py-3", "rounded-lg", "font-semibold", "hover:bg-blue-50", "transition-all", "transform", "hover:-translate-y-1", "shadow-lg", "inline-block", "text-center", "no-underline"),
+					StencilInteractions.Lien("/about/create", "Create Project", "bg-blue-700", "text-white", "px-8", "py-3", "rounded-lg", "font-semibold", "hover:bg-blue-800", "transition-all", "transform", "hover:-translate-y-1", "shadow-lg", "inline-block", "text-center", "no-underline"),
 				),
+				"flex", "flex-wrap", "justify-center", "gap-4", "mb-8",
 			),
-			"bg-primary", "bg-opacity-10", "p-4", "rounded", "shadow-sm", "mb-4",
 		),
-
-		StencilUtils.Hr("my-5"),
-
-		// Getting started section
-		StencilPage.Div(
-			StencilUtils.Join(
-				StencilText.Titre2("🏁 Getting Started", "mb-3"),
-				StencilText.Paragraphe("Follow these simple steps to create your first Stencil application:", "mb-3"),
-
-				// Step list
-				StencilPage.Div(
-					StencilUtils.Join(
-						StencilText.Paragraphe("1. Initialize a new project:", "mb-2", "fw-bold"),
-						StencilPage.Div("<code>stencil init my-awesome-app</code>", "bg-light", "p-2", "rounded", "mb-3"),
-
-						StencilText.Paragraphe("2. Navigate to your project:", "mb-2", "fw-bold"),
-						StencilPage.Div("<code>cd my-awesome-app</code>", "bg-light", "p-2", "rounded", "mb-3"),
-
-						StencilText.Paragraphe("3. Setup dependencies:", "mb-2", "fw-bold"),
-						StencilPage.Div("<code>make setup</code>", "bg-light", "p-2", "rounded", "mb-3"),
-
-						StencilText.Paragraphe("4. Build your application:", "mb-2", "fw-bold"),
-						StencilPage.Div("<code>make build</code>", "bg-light", "p-2", "rounded", "mb-3"),
-
-						StencilText.Paragraphe("5. Start the development server:", "mb-2", "fw-bold"),
-						StencilPage.Div("<code>make serve</code>", "bg-light", "p-2", "rounded", "mb-4"),
-					),
-					"",
-				),
-			),
-			"bg-white", "p-4", "rounded", "shadow-sm", "mb-4",
-		),
-
-		// Features section
-		StencilPage.Div(
-			StencilUtils.Join(
-				StencilText.Titre2("✨ Framework Features", "mb-3"),
-				StencilPage.Div(
-					StencilUtils.Join(
-						StencilPage.Div(
-							StencilUtils.Join(
-								StencilText.Titre3("🎯 Simple State Management", "mb-2"),
-								StencilText.Paragraphe("Manage your application state with easy-to-use functions", ""),
-							),
-							"col-md-4", "mb-3",
-						),
-						StencilPage.Div(
-							StencilUtils.Join(
-								StencilText.Titre3("🔧 Rich UI Components", "mb-2"),
-								StencilText.Paragraphe("Use pre-built components for forms, layout, text, and interactions", ""),
-							),
-							"col-md-4", "mb-3",
-						),
-						StencilPage.Div(
-							StencilUtils.Join(
-								StencilText.Titre3("⚡ WebAssembly Performance", "mb-2"),
-								StencilText.Paragraphe("Enjoy near-native performance with Go compiled to WebAssembly", ""),
-							),
-							"col-md-4", "mb-3",
-						),
-					),
-					"row",
-				),
-			),
-			"bg-light", "p-4", "rounded", "shadow-sm", "mb-4",
-		),
-
-		// Toggle button for more details
-		StencilPage.Div(
-			StencilInteractions.Bouton(
-				func() string {
-					if showDetails {
-						return "Hide Framework Details"
-					}
-					return "Show Framework Details"
-				}(),
-				"toggleDetails",
-				"btn", "btn-outline-primary", "btn-lg",
-			),
-			"text-center", "mb-4",
-		),
+		"text-center", "mb-12",
 	)
 
-	// Conditional details section
-	if showDetails {
-		details := StencilUtils.Join(
-			StencilUtils.Hr("my-4"),
+	// Navigation demo section
+	navigationDemo := StencilPage.Div(
+		StencilUtils.Join(
+			StencilText.Titre2("🧭 Navigation Demo", "text-3xl", "font-bold", "text-gray-800", "mb-4", "flex", "items-center"),
+			StencilText.Paragraphe("Test the Next.js-style routing:", "text-gray-600", "mb-6"),
 			StencilPage.Div(
 				StencilUtils.Join(
-					StencilText.Titre2("📚 Available Components", "mb-3"),
+					StencilInteractions.Lien("/about", "About Page", "bg-blue-500", "text-white", "px-6", "py-2", "rounded-lg", "hover:bg-blue-600", "transition-all", "transform", "hover:-translate-y-1", "shadow-md", "inline-block", "text-center", "no-underline"),
+					StencilInteractions.Lien("/about/create", "Create Page", "bg-green-500", "text-white", "px-6", "py-2", "rounded-lg", "hover:bg-green-600", "transition-all", "transform", "hover:-translate-y-1", "shadow-md", "inline-block", "text-center", "no-underline"),
+					StencilInteractions.Lien("/about/edit", "Edit Page", "bg-yellow-500", "text-white", "px-6", "py-2", "rounded-lg", "hover:bg-yellow-600", "transition-all", "transform", "hover:-translate-y-1", "shadow-md", "inline-block", "text-center", "no-underline"),
+				),
+				"flex", "flex-wrap", "gap-3", "justify-center",
+			),
+		),
+		"bg-gradient-to-r", "from-blue-50", "to-purple-50", "p-8", "border-b",
+	)
 
-					// Component categories
-					StencilPage.Div(
-						StencilUtils.Join(
-							StencilPage.Div(
-								StencilUtils.Join(
-									StencilText.Titre3("📝 Text Components", "mb-2"),
-									StencilText.Paragraphe("• Titre1, Titre2, Titre3", "mb-1"),
-									StencilText.Paragraphe("• Paragraphe, Span", "mb-1"),
-								),
-								"col-md-6", "mb-3",
-							),
-							StencilPage.Div(
-								StencilUtils.Join(
-									StencilText.Titre3("🎛️ Form Components", "mb-2"),
-									StencilText.Paragraphe("• InputText, Checkbox", "mb-1"),
-									StencilText.Paragraphe("• Label, Form", "mb-1"),
-								),
-								"col-md-6", "mb-3",
-							),
-							StencilPage.Div(
-								StencilUtils.Join(
-									StencilText.Titre3("🔗 Interactive Components", "mb-2"),
-									StencilText.Paragraphe("• Bouton (Button)", "mb-1"),
-									StencilText.Paragraphe("• Lien (Link)", "mb-1"),
-								),
-								"col-md-6", "mb-3",
-							),
-							StencilPage.Div(
-								StencilUtils.Join(
-									StencilText.Titre3("📐 Layout Components", "mb-2"),
-									StencilText.Paragraphe("• Container, Div", "mb-1"),
-									StencilText.Paragraphe("• Page components", "mb-1"),
-								),
-								"col-md-6", "mb-3",
-							),
-						),
-						"row",
+	// Getting started section
+	stepItem := func(number, title, command string) string {
+		return StencilPage.Div(
+			StencilUtils.Join(
+				StencilPage.Div(number, "bg-blue-100", "text-blue-600", "rounded-full", "w-8", "h-8", "flex", "items-center", "justify-center", "font-bold", "text-sm"),
+				StencilPage.Div(
+					StencilUtils.Join(
+						StencilText.Paragraphe(title, "font-semibold", "text-gray-800", "mb-2"),
+						`<code class="bg-gray-100 px-3 py-2 rounded text-sm">`+command+`</code>`,
 					),
 				),
-				"bg-info", "bg-opacity-10", "p-4", "rounded", "shadow-sm", "mb-4",
 			),
-
-			StencilPage.Div(
-				StencilUtils.Join(
-					StencilText.Titre2("🔗 Useful Links", "mb-3"),
-					StencilText.Paragraphe("• Framework Repository: github.com/RafaelCoppe/Stencil-Framework", "mb-2"),
-					StencilText.Paragraphe("• UI Components: github.com/RafaelCoppe/Stencil-Go", "mb-2"),
-					StencilText.Paragraphe("• Documentation: Check the CLI-README.md for detailed usage", "mb-2"),
-				),
-				"bg-success", "bg-opacity-10", "p-4", "rounded", "shadow-sm",
-			),
+			"flex", "items-start", "space-x-4",
 		)
-		content = StencilUtils.Join(content, details)
 	}
 
-	return StencilPage.Container(content, "container", "my-5")
+	gettingStarted := StencilPage.Div(
+		StencilUtils.Join(
+			StencilText.Titre2("🏁 Getting Started", "text-3xl", "font-bold", "text-gray-800", "mb-4", "flex", "items-center"),
+			StencilText.Paragraphe("Follow these simple steps to create your first Stencil application:", "text-gray-600", "mb-6"),
+			StencilPage.Div(
+				StencilUtils.Join(
+					stepItem("1", "Initialize a new project:", "stencil init my-awesome-app"),
+					stepItem("2", "Navigate to your project:", "cd my-awesome-app"),
+					stepItem("3", "Setup dependencies:", "make setup"),
+					stepItem("4", "Build your application:", "make build"),
+					stepItem("5", "Start the development server:", "make serve"),
+				),
+				"space-y-4",
+			),
+		),
+		"p-8", "border-b",
+	)
+
+	// Features section
+	featureCard := func(icon, title, description string) string {
+		return StencilPage.Div(
+			StencilUtils.Join(
+				StencilPage.Div(icon, "text-4xl", "mb-4"),
+				StencilText.Titre3(title, "text-xl", "font-semibold", "text-gray-800", "mb-2"),
+				StencilText.Paragraphe(description, "text-gray-600"),
+			),
+			"text-center", "p-6", "bg-gradient-to-br", "from-blue-50", "to-blue-100", "rounded-xl",
+		)
+	}
+
+	features := StencilPage.Div(
+		StencilUtils.Join(
+			StencilText.Titre2("✨ Framework Features", "text-3xl", "font-bold", "text-gray-800", "mb-6", "flex", "items-center"),
+			StencilPage.Div(
+				StencilUtils.Join(
+					featureCard("🎯", "Simple State Management", "Manage your application state with easy-to-use functions"),
+					featureCard("🔧", "Rich UI Components", "Use pre-built components for forms, layout, text, and interactions"),
+					featureCard("⚡", "WebAssembly Performance", "Enjoy near-native performance with Go compiled to WebAssembly"),
+				),
+				"grid", "md:grid-cols-3", "gap-6",
+			),
+		),
+		"p-8", "border-b",
+	)
+
+	// Toggle button section
+	toggleButton := StencilPage.Div(
+		StencilInteractions.Bouton(
+			func() string {
+				if showDetails {
+					return "Hide Framework Details"
+				}
+				return "Show Framework Details"
+			}(),
+			"toggleDetails",
+			"bg-gradient-to-r", "from-blue-500", "to-purple-600", "text-white", "px-8", "py-3", "rounded-xl", "font-semibold", "hover:from-blue-600", "hover:to-purple-700", "transition-all", "transform", "hover:-translate-y-1", "shadow-lg",
+		),
+		"p-8", "text-center", "border-b",
+	)
+
+	// Details section (conditionally rendered)
+	detailsSection := ""
+	if showDetails {
+		componentCard := func(title, items string) string {
+			return StencilPage.Div(
+				StencilUtils.Join(
+					StencilText.Titre3(title, "text-xl", "font-semibold", "text-gray-800", "mb-3"),
+					StencilPage.Ul([]string{items}, "text-gray-600", "space-y-1"),
+				),
+				"bg-gradient-to-br", "from-gray-50", "to-gray-100", "p-6", "rounded-xl",
+			)
+		}
+
+		detailsSection = StencilPage.Div(
+			StencilUtils.Join(
+				StencilText.Titre2("📚 Available Components", "text-3xl", "font-bold", "text-gray-800", "mb-6", "flex", "items-center"),
+				StencilPage.Div(
+					StencilUtils.Join(
+						componentCard("📝 Text Components", "• Titre1, Titre2, Titre3<br>• Paragraphe, Span"),
+						componentCard("🎛️ Form Components", "• InputText, Checkbox<br>• Label, Form"),
+						componentCard("🔗 Interactive Components", "• Bouton (Button)<br>• Lien (Link)"),
+						componentCard("📐 Layout Components", "• Container, Div<br>• Page components"),
+					),
+					"grid", "md:grid-cols-2", "gap-6", "mb-8",
+				),
+				StencilPage.Div(
+					StencilUtils.Join(
+						StencilText.Titre3("🔗 Useful Links", "text-xl", "font-semibold", "text-gray-800", "mb-3"),
+						StencilPage.Ul([]string{
+							"• Framework Repository: github.com/RafaelCoppe/Stencil-Framework",
+							"• Documentation: Check the CLI-README.md for detailed usage",
+						}, "text-gray-600", "space-y-2"),
+					),
+					"bg-gradient-to-br", "from-green-50", "to-green-100", "p-6", "rounded-xl",
+				),
+			),
+			"p-8",
+		)
+	}
+
+	// Main content container
+	mainContent := StencilPage.Div(
+		StencilUtils.Join(
+			navigationDemo,
+			gettingStarted,
+			features,
+			toggleButton,
+			detailsSection,
+		),
+		"bg-white", "rounded-2xl", "shadow-2xl", "overflow-hidden", "mb-8",
+	)
+
+	// Main page container
+	return StencilPage.Div(
+		StencilPage.Div(
+			StencilUtils.Join(
+				heroSection,
+				mainContent,
+			),
+			"max-w-6xl", "mx-auto",
+		),
+		"min-h-screen", "bg-gradient-to-br", "from-blue-500", "to-purple-600", "py-8", "px-4",
+	)
 }
 
 // RegisterRoutes registers all routes for this application
@@ -215,5 +224,12 @@ func RegisterRoutes() {
 		func() framework.PageInterface { return &WelcomePage{} },
 		nil, // create.go handler
 		nil, // edit.go handler
+	)
+
+	// Register about page routes
+	framework.RegisterPageRoute("/about",
+		func() framework.PageInterface { return &about.AboutPage{} },
+		func() framework.PageInterface { return &about.AboutCreatePage{} },
+		func() framework.PageInterface { return &about.AboutEditPage{} },
 	)
 }

@@ -32,6 +32,7 @@ go.work.sum
 # .vscode/
 
 app/*
+!app/about/
 !app/app.go
 
 components/*
