@@ -6,6 +6,7 @@ import (
 	"syscall/js"
 
 	"github.com/RafaelCoppe/Stencil-Framework/app/about"
+	"github.com/RafaelCoppe/Stencil-Framework/app/apitest"
 	"github.com/RafaelCoppe/Stencil-Framework/components"
 	"github.com/RafaelCoppe/Stencil-Framework/core/framework"
 	StencilInteractions "github.com/RafaelCoppe/Stencil-Go/pkg/interactions"
@@ -36,6 +37,8 @@ func (p *WelcomePage) HandleEvent(eventName string, event js.Value) {
 		framework.NavigateTo("/about/create")
 	case "navigateToEdit":
 		framework.NavigateTo("/about/edit")
+	case "navigateToApiTest":
+		framework.NavigateTo("/apitest")
 	}
 }
 
@@ -62,6 +65,7 @@ func (p *WelcomePage) Render() string {
 					StencilInteractions.Lien("/about", "About Page", "bg-blue-500", "text-white", "px-6", "py-2", "rounded-lg", "hover:bg-blue-600", "transition-all", "transform", "hover:-translate-y-1", "shadow-md", "inline-block", "text-center", "no-underline"),
 					StencilInteractions.Lien("/about/create", "Create Page", "bg-green-500", "text-white", "px-6", "py-2", "rounded-lg", "hover:bg-green-600", "transition-all", "transform", "hover:-translate-y-1", "shadow-md", "inline-block", "text-center", "no-underline"),
 					StencilInteractions.Lien("/about/edit", "Edit Page", "bg-yellow-500", "text-white", "px-6", "py-2", "rounded-lg", "hover:bg-yellow-600", "transition-all", "transform", "hover:-translate-y-1", "shadow-md", "inline-block", "text-center", "no-underline"),
+					StencilInteractions.Lien("/apitest", "API Test 🌐", "bg-purple-500", "text-white", "px-6", "py-2", "rounded-lg", "hover:bg-purple-600", "transition-all", "transform", "hover:-translate-y-1", "shadow-md", "inline-block", "text-center", "no-underline"),
 				),
 				"flex", "flex-wrap", "gap-3", "justify-center",
 			),
@@ -78,26 +82,21 @@ func (p *WelcomePage) Render() string {
 				StencilUtils.Join(
 					components.StepItem(components.ComponentProps{
 						"number":  "1",
-						"title":   "Initialize a new project:",
-						"command": "stencil init my-awesome-app",
+						"title":   "Clone the repository:",
+						"command": "git clone https://github.com/RafaelCoppe/Stencil-Framework.git",
 					}),
 					components.StepItem(components.ComponentProps{
 						"number":  "2",
-						"title":   "Navigate to your project:",
-						"command": "cd my-awesome-app",
-					}),
-					components.StepItem(components.ComponentProps{
-						"number":  "3",
 						"title":   "Setup dependencies:",
 						"command": "make setup",
 					}),
 					components.StepItem(components.ComponentProps{
-						"number":  "4",
+						"number":  "3",
 						"title":   "Build your application:",
 						"command": "make build",
 					}),
 					components.StepItem(components.ComponentProps{
-						"number":  "5",
+						"number":  "4",
 						"title":   "Start the development server:",
 						"command": "make serve",
 					}),
@@ -230,5 +229,11 @@ func RegisterRoutes() {
 		func() framework.PageInterface { return &about.AboutPage{} },
 		func() framework.PageInterface { return &about.AboutCreatePage{} },
 		func() framework.PageInterface { return &about.AboutEditPage{} },
+	)
+
+	framework.RegisterPageRoute("/apitest",
+		func() framework.PageInterface { return &apitest.ApitestPage{} },
+		nil,
+		nil,
 	)
 }
