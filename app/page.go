@@ -51,6 +51,7 @@ func (p *WelcomePage) Render() string {
 				StencilPage.Div(
 					StencilUtils.Join(
 						StencilInteractions.Lien("/about", "About Page", "btn", "btn-primary", "me-2", "mb-2"),
+						StencilInteractions.Lien("/components", "Components Demo", "btn", "btn-info", "me-2", "mb-2"),
 						StencilInteractions.Lien("/about/create", "Create Page", "btn", "btn-success", "me-2", "mb-2"),
 						StencilInteractions.Lien("/about/edit", "Edit Page", "btn", "btn-warning", "me-2", "mb-2"),
 					),
@@ -213,6 +214,13 @@ func RegisterRoutes() {
 	// Register the welcome page route
 	framework.RegisterPageRoute("/",
 		func() framework.PageInterface { return &WelcomePage{} },
+		nil, // create.go handler
+		nil, // edit.go handler
+	)
+
+	// Register components demo route
+	framework.RegisterPageRoute("/components",
+		func() framework.PageInterface { return &ComponentsDemo{} },
 		nil, // create.go handler
 		nil, // edit.go handler
 	)

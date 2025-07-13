@@ -21,6 +21,12 @@ func main() {
 			return
 		}
 		createRoute(os.Args[2])
+	case "create-component":
+		if len(os.Args) < 4 {
+			fmt.Println("Usage: go run cmd/cli.go create-component <folder> <component-name>")
+			return
+		}
+		createComponent(os.Args[2], os.Args[3])
 	default:
 		printUsage()
 	}
@@ -31,10 +37,13 @@ func printUsage() {
 	fmt.Println("")
 	fmt.Println("Usage:")
 	fmt.Println("  go run cmd/cli.go create-route <route-path>")
+	fmt.Println("  go run cmd/cli.go create-component <folder> <component-name>")
 	fmt.Println("")
 	fmt.Println("Examples:")
 	fmt.Println("  go run cmd/cli.go create-route users")
 	fmt.Println("  go run cmd/cli.go create-route admin/dashboard")
+	fmt.Println("  go run cmd/cli.go create-component ui button")
+	fmt.Println("  go run cmd/cli.go create-component forms validation")
 }
 
 func createRoute(routePath string) {
@@ -241,4 +250,98 @@ func (p *%sEditPage) Render() string {
 	return StencilPage.Container(content, "container", "my-5")
 }
 `, packageName, strings.Title(packageName), routePath, strings.Title(packageName), strings.Title(packageName), strings.Title(packageName), title, routePath, routePath, title)
+}
+
+func createComponent(folderName, componentName string) {
+	// Validate input
+	if folderName == "" || componentName == "" {
+		fmt.Println("Error: Folder name and component name cannot be empty")
+		return
+	}
+
+	// Clean the inputs
+	folderName = strings.TrimSpace(folderName)
+	componentName = strings.TrimSpace(componentName)
+
+	// Validate component name (should be valid Go identifier)
+	if !isValidGoIdentifier(componentName) {
+		fmt.Println("Error: Component name must be a valid Go identifier")
+		return
+	}
+
+	// Create the components folder path
+	componentsDir := filepath.Join("components", folderName)
+	componentFile := filepath.Join(componentsDir, componentName+".go")
+
+	// Check if folder exists, if not create it
+	if _, err := os.Stat(componentsDir); os.IsNotExist(err) {
+		fmt.Printf("Creating new component folder: %s\n", componentsDir)
+		err := os.MkdirAll(componentsDir, 0755)
+		if err != nil {
+			fmt.Printf("Error creating directory: %v\n", err)
+			return
+		}
+
+		// Create go.mod file for the new component folder
+		goModPath := filepath.Join(componentsDir, "go.mod")
+		goModContent := generateComponentGoMod(folderName)
+		err = os.WriteFile(goModPath, []byte(goModContent), 0644)
+		if err != nil {
+			fmt.Printf("Error creating go.mod file: %v\n", err)
+			return
+		}
+		fmt.Printf("Created go.mod file: %s\n", goModPath)
+	}
+
+	// Check if component file already exists
+	if _, err := os.Stat(componentFile); err == nil {
+		fmt.Printf("Error: Component file already exists: %s\n", componentFile)
+		return
+	}
+
+	// Write the component file
+	err := os.WriteFile(componentFile, []byte(""), 0644)
+	if err != nil {
+		fmt.Printf("Error creating component file: %v\n", err)
+		return
+	}
+
+	fmt.Printf("✅ Successfully created component: %s\n", componentFile)
+	fmt.Printf("📁 Component folder: %s\n", componentsDir)
+	fmt.Printf("🔧 Usage: import \"%s/components/%s\"\n", "github.com/RafaelCoppe/Stencil-Framework", folderName)
+	fmt.Printf("📝 Function: %s.%s(...)\n", folderName, strings.Title(componentName))
+}
+
+func isValidGoIdentifier(name string) bool {
+	if len(name) == 0 {
+		return false
+	}
+
+	// Check first character (must be letter or underscore)
+	first := name[0]
+	if !((first >= 'a' && first <= 'z') || (first >= 'A' && first <= 'Z') || first == '_') {
+		return false
+	}
+
+	// Check remaining characters (letters, digits, or underscore)
+	for i := 1; i < len(name); i++ {
+		char := name[i]
+		if !((char >= 'a' && char <= 'z') || (char >= 'A' && char <= 'Z') ||
+			(char >= '0' && char <= '9') || char == '_') {
+			return false
+		}
+	}
+
+	return true
+}
+
+func generateComponentGoMod(folderName string) string {
+	return fmt.Sprintf(`module github.com/RafaelCoppe/Stencil-Framework/components/%s
+
+go 1.21
+
+replace github.com/RafaelCoppe/Stencil-Go => ../../../Stencil-Go
+
+require github.com/RafaelCoppe/Stencil-Go v1.0.4
+`, folderName)
 }
