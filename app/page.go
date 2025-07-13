@@ -6,6 +6,7 @@ import (
 	"syscall/js"
 
 	"github.com/RafaelCoppe/Stencil-Framework/app/about"
+	"github.com/RafaelCoppe/Stencil-Framework/components"
 	"github.com/RafaelCoppe/Stencil-Framework/framework"
 	StencilInteractions "github.com/RafaelCoppe/Stencil-Go/pkg/interactions"
 	StencilPage "github.com/RafaelCoppe/Stencil-Go/pkg/page"
@@ -41,23 +42,15 @@ func (p *WelcomePage) HandleEvent(eventName string, event js.Value) {
 func (p *WelcomePage) Render() string {
 	showDetails := framework.GetStateBool("showDetails")
 
-	// Create the main hero section
-	heroSection := StencilPage.Div(
-		StencilUtils.Join(
-			StencilText.Titre1("Stencil Framework 🚀", "text-5xl", "font-bold", "text-white", "mb-4"),
-			StencilText.Paragraphe("Build modern WebAssembly applications with Go", "text-xl", "text-blue-100", "mb-8"),
-
-			// Call to action buttons
-			StencilPage.Div(
-				StencilUtils.Join(
-					StencilInteractions.Lien("/about", "Get Started", "bg-white", "text-blue-600", "px-8", "py-3", "rounded-lg", "font-semibold", "hover:bg-blue-50", "transition-all", "transform", "hover:-translate-y-1", "shadow-lg", "inline-block", "text-center", "no-underline"),
-					StencilInteractions.Lien("/about/create", "Create Project", "bg-blue-700", "text-white", "px-8", "py-3", "rounded-lg", "font-semibold", "hover:bg-blue-800", "transition-all", "transform", "hover:-translate-y-1", "shadow-lg", "inline-block", "text-center", "no-underline"),
-				),
-				"flex", "flex-wrap", "justify-center", "gap-4", "mb-8",
-			),
-		),
-		"text-center", "mb-12",
-	)
+	// Create the main hero section using HeroSection component
+	heroSection := components.HeroSection(components.ComponentProps{
+		"title":               "Stencil Framework 🚀",
+		"subtitle":            "Build modern WebAssembly applications with Go",
+		"primaryButtonText":   "Get Started",
+		"primaryButtonHref":   "/about",
+		"secondaryButtonText": "Create Project",
+		"secondaryButtonHref": "/about/create",
+	})
 
 	// Navigation demo section
 	navigationDemo := StencilPage.Div(
@@ -76,33 +69,38 @@ func (p *WelcomePage) Render() string {
 		"bg-gradient-to-r", "from-blue-50", "to-purple-50", "p-8", "border-b",
 	)
 
-	// Getting started section
-	stepItem := func(number, title, command string) string {
-		return StencilPage.Div(
-			StencilUtils.Join(
-				StencilPage.Div(number, "bg-blue-100", "text-blue-600", "rounded-full", "w-8", "h-8", "flex", "items-center", "justify-center", "font-bold", "text-sm"),
-				StencilPage.Div(
-					StencilUtils.Join(
-						StencilText.Paragraphe(title, "font-semibold", "text-gray-800", "mb-2"),
-						`<code class="bg-gray-100 px-3 py-2 rounded text-sm">`+command+`</code>`,
-					),
-				),
-			),
-			"flex", "items-start", "space-x-4",
-		)
-	}
-
+	// Getting started section using StepItem components
 	gettingStarted := StencilPage.Div(
 		StencilUtils.Join(
 			StencilText.Titre2("🏁 Getting Started", "text-3xl", "font-bold", "text-gray-800", "mb-4", "flex", "items-center"),
 			StencilText.Paragraphe("Follow these simple steps to create your first Stencil application:", "text-gray-600", "mb-6"),
 			StencilPage.Div(
 				StencilUtils.Join(
-					stepItem("1", "Initialize a new project:", "stencil init my-awesome-app"),
-					stepItem("2", "Navigate to your project:", "cd my-awesome-app"),
-					stepItem("3", "Setup dependencies:", "make setup"),
-					stepItem("4", "Build your application:", "make build"),
-					stepItem("5", "Start the development server:", "make serve"),
+					components.StepItem(components.ComponentProps{
+						"number":  "1",
+						"title":   "Initialize a new project:",
+						"command": "stencil init my-awesome-app",
+					}),
+					components.StepItem(components.ComponentProps{
+						"number":  "2",
+						"title":   "Navigate to your project:",
+						"command": "cd my-awesome-app",
+					}),
+					components.StepItem(components.ComponentProps{
+						"number":  "3",
+						"title":   "Setup dependencies:",
+						"command": "make setup",
+					}),
+					components.StepItem(components.ComponentProps{
+						"number":  "4",
+						"title":   "Build your application:",
+						"command": "make build",
+					}),
+					components.StepItem(components.ComponentProps{
+						"number":  "5",
+						"title":   "Start the development server:",
+						"command": "make serve",
+					}),
 				),
 				"space-y-4",
 			),
@@ -110,26 +108,27 @@ func (p *WelcomePage) Render() string {
 		"p-8", "border-b",
 	)
 
-	// Features section
-	featureCard := func(icon, title, description string) string {
-		return StencilPage.Div(
-			StencilUtils.Join(
-				StencilPage.Div(icon, "text-4xl", "mb-4"),
-				StencilText.Titre3(title, "text-xl", "font-semibold", "text-gray-800", "mb-2"),
-				StencilText.Paragraphe(description, "text-gray-600"),
-			),
-			"text-center", "p-6", "bg-gradient-to-br", "from-blue-50", "to-blue-100", "rounded-xl",
-		)
-	}
-
+	// Features section using FeatureCard components
 	features := StencilPage.Div(
 		StencilUtils.Join(
 			StencilText.Titre2("✨ Framework Features", "text-3xl", "font-bold", "text-gray-800", "mb-6", "flex", "items-center"),
 			StencilPage.Div(
 				StencilUtils.Join(
-					featureCard("🎯", "Simple State Management", "Manage your application state with easy-to-use functions"),
-					featureCard("🔧", "Rich UI Components", "Use pre-built components for forms, layout, text, and interactions"),
-					featureCard("⚡", "WebAssembly Performance", "Enjoy near-native performance with Go compiled to WebAssembly"),
+					components.FeatureCard(components.ComponentProps{
+						"icon":        "🎯",
+						"title":       "Simple State Management",
+						"description": "Manage your application state with easy-to-use functions",
+					}),
+					components.FeatureCard(components.ComponentProps{
+						"icon":        "🔧",
+						"title":       "Rich UI Components",
+						"description": "Use pre-built components for forms, layout, text, and interactions",
+					}),
+					components.FeatureCard(components.ComponentProps{
+						"icon":        "⚡",
+						"title":       "WebAssembly Performance",
+						"description": "Enjoy near-native performance with Go compiled to WebAssembly",
+					}),
 				),
 				"grid", "md:grid-cols-3", "gap-6",
 			),

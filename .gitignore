@@ -37,3 +37,4 @@ app/*
 
 components/*
 !components/go.mod
+!components/examples.go
